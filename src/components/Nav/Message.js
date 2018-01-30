@@ -14,7 +14,12 @@ class Message extends Component {
 
   monitorStore(cb) {
     let userID = Auth.getUserId();
-    let socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+    if (process.env.NODE_ENV === 'development') {
+      var socket = io.connect(`${process.env.REACT_APP_DOMAIN}/`);
+    } else {
+      // var socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+      var socket = io.connect('/');
+    }
     socket.on(userID, function(data) {
       if (data.message === "Orders Updated") {
         cb();

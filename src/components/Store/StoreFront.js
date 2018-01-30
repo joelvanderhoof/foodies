@@ -14,7 +14,13 @@ import Menu from '../Shared/Menu';
 import helpers from '../utils/helpers'
 import Auth from '../utils/Auth';
 import io from 'socket.io-client';
-let socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+
+if (process.env.NODE_ENV === 'development') {
+  var socket = io.connect(`${process.env.REACT_APP_DOMAIN}/`);
+} else {
+  // var socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+  var socket = io.connect('/');
+}
 
 
 class StoreFront extends Component {
@@ -201,7 +207,13 @@ class StoreFront extends Component {
   //socket advises all customers store updated
   listenToStore(cb) {
     // let userID = Auth.getUserId();
-    let socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+    if (process.env.NODE_ENV === 'development') {
+      var socket = io.connect(`${process.env.REACT_APP_DOMAIN}/`);
+    } else {
+      // var socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+      var socket = io.connect('/');
+    }
+
     let sellerID = this.props.location.pathname.split('/')[2];
     socket.on(sellerID, function(data) {
       console.log(data);

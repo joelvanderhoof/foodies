@@ -1,4 +1,5 @@
 // Require dependencies
+require('dotenv').config({});
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -6,14 +7,19 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 
+if (process.env.NODE_ENV === 'development') {
+    console.log(process.env.NODE_ENV);
+    var cors = require('cors');
+    
+}
+
 //Mongo/Mongoose --------------------------------------------------------------
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const DBconnect = 'mongodb://tiger-foodie:benColeIsAwesome1@ds119578.mlab.com:19578/heroku_hlgv59g4';
 
-// Configure DB
+// Configure MONGO DB
 mongoose.Promise = Promise;
-mongoose.connect(DBconnect, {
+mongoose.connect(process.env.MONGODB_URL, {
     useMongoClient: true
 });
 const db = mongoose.connection;
@@ -29,9 +35,17 @@ db.once('openUri', () => {
 
 // Initialize express app
 const app = express();
+
+if (process.env.NODE_ENV === 'development') {
+    app.use(cors());
+    console.log('cors running');
+};
+
 const server = require('http').createServer(app);
 var io = require('socket.io')(server);
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || process.env.DEV_PORT;
+
+
 
 // Use body parser to parse incoming requests as json
 app.use(bodyParser.json());

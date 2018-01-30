@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import StoreList from './StoreList';
+// import helpers, { getStoreData } from '../utils/helpers';
 
 
 export default class MapSearch extends Component {
@@ -34,7 +35,7 @@ export default class MapSearch extends Component {
     getStoreData(searchCity) {
         return new Promise((resolve, reject) => {
             let locationData = undefined;
-            axios.get(`https://neighborhood-bake-sale.herokuapp.com/api/store-marker/${searchCity}`)
+            axios.get(`${process.env.REACT_APP_DOMAIN}/api/store-marker/${searchCity}`)
                 .then((res) => {
                   locationData = this.buildDataLayer(res);
                   this.bindStoreData(res.data);                  
@@ -82,7 +83,7 @@ export default class MapSearch extends Component {
     //async
     componentDidMount() {
         window.initMap = this.initMap;
-        this.loadJS('https://maps.googleapis.com/maps/api/js?key=AIzaSyBEF9CrZfS_ucE-Tj08YB4SH56v9Ni6sso&callback=initMap');        
+        this.loadJS(`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&callback=initMap`);        
     }
 
     async initMap() {

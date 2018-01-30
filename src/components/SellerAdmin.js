@@ -72,7 +72,12 @@ class SellerAdmin extends Component {
   //socket advises all customers store updated
   notifyCustomers() {
     let userID = Auth.getUserId();
-    let socket = io.connect('https://neighborhood-bake-sale.herokuapp.com/');
+    if (process.env.NODE_ENV === 'development') {
+      var socket = io.connect(`${process.env.REACT_APP_DOMAIN}/`);
+    } else {
+      // var socket = io.connect('https://foodies.herokuapp.com/');
+      var socket = io.connect('/');
+    }
 
     socket.emit("users", {
       storeID: userID,

@@ -64,6 +64,14 @@ a, a:hover, a:active, a:link, a:visited {
   color: #d0021b;
 }
 
+.search-button {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  width: 35;
+  height: 35;
+}
+
 /* Map Search */
 .search-map {
   display: block;

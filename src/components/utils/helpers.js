@@ -1,20 +1,45 @@
 // Axios dependencies for GET/POST requests
 const axios = require('axios');
 
+// Set base URL for "development" environment
+if (process.env.NODE_ENV === "development") {
+  var instance = axios.create({
+      baseURL: `http://localhost:${process.env.REACT_APP_DEV_PORT}`,
+      timeout: 2000
+    });
+} else {
+  var instance = axios.create({
+      timeout: 2000
+    });
+}
+
 let helpers = {
 
   getStore(storeID) {
-    return axios.get('api/store/' + storeID)
+    return instance.get('api/store/' + storeID)
   },
 
-
+  getStoreData(searchCity) {
+    console.log('getStoreData called', searchCity);
+    return new Promise((resolve, reject) => {
+        let locationData = undefined;
+        instance.get(`/api/store-marker/${searchCity}`)
+            .then((res) => {
+              locationData = this.buildDataLayer(res);
+              this.bindStoreData(res.data);                  
+                console.log(`This location data was just built from the db: ${JSON.stringify(locationData)}`);
+                resolve(locationData);
+                
+            })            
+    });
+},
 
   getPublicReview(sellerId) {
-    return axios.get('./../api/review/' + sellerId)
+    return instance.get('./../api/review/' + sellerId)
   },
 
   logIn(credentials) {
-    return axios.post('/auth/login', {
+    return instance.post('/auth/login', {
       email: credentials.email,
       password: credentials.password
     }
@@ -22,7 +47,7 @@ let helpers = {
   },
 
   signup(credentials) {
-    return axios.post('/auth/signup', {
+    return instance.post('/auth/signup', {
       firstName: credentials.firstName,
       lastName: credentials.lastName,
       email: credentials.email,
@@ -32,7 +57,7 @@ let helpers = {
   },
 
   getUser(id, token) {
-    return axios.get(`/api/user/${id}`, {
+    return instance.get(`/api/user/${id}`, {
       headers: {
         authorization: token
       }
@@ -40,12 +65,12 @@ let helpers = {
   },
 
   saveStore(storeID, storeData) {
-    return axios.put("api/store/" + storeID, storeData)
+    return instance.put("api/store/" + storeID, storeData)
   },
 
   // Randy's routes
   getUserSecure(id, token) {
-    return axios.get(`./../secure/user/${id}`, {
+    return instance.get(`./../secure/user/${id}`, {
       headers: {
         authorization: token
       }
@@ -53,7 +78,7 @@ let helpers = {
   },
 
   postReview(sellerId,review,token) {
-    return axios.post(`./../secure/review/${sellerId}`,{
+    return instance.post(`./../secure/review/${sellerId}`,{
       review: review.review,
       rating: review.rating,
       customerFirstName: review.customerFirstName,
@@ -69,7 +94,7 @@ let helpers = {
   },
 
   placeOrder(storeId, order, token) {
-    return axios.post(`./../secure/order/${storeId}`, {
+    return instance.post(`./../secure/order/${storeId}`, {
       customerId: order.customerId, //same as the ID from the Customer model
       sellerId: order.sellerId, //same as the ID from the Seller collection
       storeId: order.storeId,
@@ -87,7 +112,7 @@ let helpers = {
   },
 
   bookmarkStore(storeData, token) {
-    return axios.post(`./../secure/bookmark/`, {
+    return instance.post(`./../secure/bookmark/`, {
       userId: storeData.userId,
       userFirstName: storeData.userFirstName,
       userLastName: storeData.userLastName,
@@ -103,7 +128,7 @@ let helpers = {
   },
 
   removeBookmark(storeData, token) {
-    return axios({
+    return instance({
       method: 'delete',
       url: `./../secure/bookmark/`,
       data: {
@@ -118,25 +143,25 @@ let helpers = {
   },
 
   getPublicStore(sellerId) {
-    return axios.get('./../api/store/' + sellerId)
+    return instance.get('./../api/store/' + sellerId)
   },
 
   getOrders(sellerID) {
-    return axios.get('api/order/' + sellerID);
+    return instance.get('api/order/' + sellerID);
   },
 
   getOrdersCustomer(ID) {
-    return axios.get('./../api/order/' + ID);
+    return instance.get('./../api/order/' + ID);
   },
 
   updateOrderStatus(sellerID, newOrder){
-    return axios.put('api/order/' + sellerID, newOrder);
+    return instance.put('api/order/' + sellerID, newOrder);
   },
 
   updateOrderStatusCustomer(sellerID, newOrder){
-    return axios.put('./../api/order/' + sellerID, newOrder);
+    return instance.put('./../api/order/' + sellerID, newOrder);
   }
 }
 
 // Export API Helper
-module.exports = helpers
+module.exports = helpers;

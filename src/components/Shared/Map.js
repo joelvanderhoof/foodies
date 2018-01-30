@@ -6,7 +6,6 @@ class Map extends Component {
     return (
       <div className={this.props.mapStyle}>
         Map Component
-        {/* Api key AIzaSyAEjV1RAoMKseN8q9Xp5kpzKEqcLl5nsz0 */}
       </div>
     );
   }
